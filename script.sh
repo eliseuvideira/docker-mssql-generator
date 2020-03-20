@@ -6,24 +6,32 @@ set -e
 # Program name
 PROGNAME="${0##*/}"
 
+# Usage error message
+usage () {
+  echo "$PROGNAME: usage: $0 DATABASE_NAME DATABASE_PORT DATABASE_PASSWORD"
+}
+
 # Handler for validation errors
 exit_with_error () {
   echo "$PROGNAME: error: $1"
   exit 1
 }
 
-# Load environment variable from file
-source ./.env
+[[ $# == 3 ]] || (usage ; exit_with_error "Invalid number of parameters")
+
+DATABASE_NAME=$1
+DATABASE_PORT=$2
+DATABASE_PASSWORD=$3
 
 # Validate variables 
 [[ -n "$DATABASE_NAME" ]] \
   || exit_with_error "env variable 'DATABASE_NAME' not set"
 
-[[ -n "$DATABASE_PASSWORD" ]] && (( ${#DATABASE_PASSWORD} > 8 )) \
-  || exit_with_error "env variable 'DATABASE_PASSWORD' invalid or not set (min 8 characters)"
-
 [[ -n "$DATABASE_PORT" ]] && [[ "$DATABASE_PORT" =~ ^[0-9]+$ ]] \
   || exit_with_error "env variable 'DATABASE_PORT' invalid or not set (only numbers)"
+
+[[ -n "$DATABASE_PASSWORD" ]] && (( ${#DATABASE_PASSWORD} > 8 )) \
+  || exit_with_error "env variable 'DATABASE_PASSWORD' invalid or not set (min 8 characters)"
 
 # Define database directory
 DATABASE_DIRECTORY="/databases/$DATABASE_NAME"
