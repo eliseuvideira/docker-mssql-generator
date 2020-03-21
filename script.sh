@@ -53,4 +53,5 @@ docker run \
   -p "$DATABASE_PORT:1433" \
   -v "/databases/$DATABASE_NAME/data:/var/opt/mssql" \
   --name "$DATABASE_NAME" \
+  --restart always \
   -d mcr.microsoft.com/mssql/server:2019-latest
